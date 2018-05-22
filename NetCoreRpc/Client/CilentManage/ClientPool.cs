@@ -46,6 +46,7 @@ namespace NetCoreRpc.Client.CilentManage
             Interlocked.Increment(ref CurrentRequestCount);
             if (CurrentCount > 0)
             {
+                InstallPool();
                 return ConnectedClientList[CurrentRequestCount % CurrentCount];
             }
             else
@@ -119,7 +120,6 @@ namespace NetCoreRpc.Client.CilentManage
                 {
                     _clientPool.ConnectedClientList.Remove(_client);
                     _clientPool.CurrentCount -= 1;
-                    _clientPool.InstallPool();
                     _lock.LockRelease(lockkey, operateID);
                 }
                 else
