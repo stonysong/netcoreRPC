@@ -78,7 +78,7 @@ namespace NRpc.ServerRoute.ZK
                     var isExists = await ExistsAsync(currentPath);
                     if (!isExists)
                     {
-                        var createdPath = await _zooKeeper.createAsync(currentPath, null, acl, CreateMode.PERSISTENT);
+                        var createdPath = await _zooKeeper.createAsync(currentPath, path == currentPath ? data : null, acl, createMode);
                         if (!string.IsNullOrWhiteSpace(createdPath))
                         {
                         }
@@ -90,6 +90,7 @@ namespace NRpc.ServerRoute.ZK
             {
                 return await _zooKeeper.createAsync(path, data, acl, createMode);
             }
+
             return path;
         }
 
@@ -123,6 +124,15 @@ namespace NRpc.ServerRoute.ZK
                 return dataResult.Data;
             }
             return null;
+        }
+
+        public async Task SetDataAsync(string sourcePath, byte[] data)
+        {
+            var exists = await ExistsAsync(sourcePath);
+            if (exists)
+            {
+                await _zooKeeper.setDataAsync(sourcePath, data);
+            }
         }
 
         public async Task ReConnectAsync()
